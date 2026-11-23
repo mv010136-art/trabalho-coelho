@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Reserva #{{ reservation.pk }}{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-md-6 col-md-offset-3">
+    <h2 class="page-header">Reserva #{{ reservation.pk }}
+      <span class="label label-phase-{{ reservation.phase }}">{{ reservation.phase_label }}</span></h2>
+    <ul class="list-group">
+      <li class="list-group-item"><strong>Cliente:</strong> {{ reservation.customer }}{% if reservation.customer.phone %} — {{ reservation.customer.phone }}{% endif %}</li>
+      <li class="list-group-item"><strong>Veículo:</strong> <a href="{{ reservation.vehicle.get_absolute_url }}">{{ reservation.vehicle.name }}</a> ({{ reservation.vehicle.plate }})</li>
+      <li class="list-group-item"><strong>Retirada:</strong> {{ reservation.start_date|date:"d/m/Y" }}</li>
+      <li class="list-group-item"><strong>Devolução:</strong> {{ reservation.end_date|date:"d/m/Y" }}</li>
+      <li class="list-group-item"><strong>Diárias:</strong> {{ reservation.days }} × R$ {{ reservation.daily_rate|floatformat:2 }}</li>
+      <li class="list-group-item"><strong>Total:</strong> <span class="vehicle-price">R$ {{ reservation.total_price|floatformat:2 }}</span></li>
+      {% if reservation.notes %}<li class="list-group-item"><strong>Observações:</strong> {{ reservation.notes|linebreaksbr }}</li>{% endif %}
+      <li class="list-group-item"><strong>Criada em:</strong> {{ reservation.created_at|date:"d/m/Y H:i" }}</li>
+    </ul>
+    {% if can_modify %}
+      <a href="{% url 'reservations:update' reservation.pk %}" class="btn btn-warning"><span class="glyphicon glyphicon-pencil"></span> Alterar datas</a>
+      <a href="{% url 'reservations:cancel' reservation.pk %}" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span> Cancelar reserva</a>
+    {% elif reservation.status == 'confirmed' %}
+      <p class="text-muted">Alterações e cancelamentos pelo site são permitidos até o dia anterior à retirada. Para mudanças depois disso, <a href="{% url 'core:contact' %}">fale conosco</a>.</p>
+    {% endif %}
+    {% if user.is_staff and reservation.status == 'confirmed' %}
+      <form method="post" action="{% url 'reservations:complete' reservation.pk %}" class="inline-form">
+        {% csrf_token %}<input type="hidden" name="next" value="{{ reservation.get_absolute_url }}">
+        <button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> Marcar como concluída</button>
+      </form>
+    {% endif %}
+    <p style="margin-top:15px"><a href="{% if user.is_staff %}{% url 'core:panel_reservations' %}{% else %}{% url 'reservations:list' %}{% endif %}">&larr; Voltar</a></p>
+  </div>
+</div>
+{% endblock %}

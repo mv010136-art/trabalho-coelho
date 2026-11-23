@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Painel{% endblock %}
+{% block content %}
+<h2 class="page-header">Painel da equipe</h2>
+{% include "core/_panel_nav.html" with active="dashboard" %}
+
+<div class="row">
+  <div class="col-sm-6 col-md-3"><div class="stat-box"><div class="stat-value">{{ vehicles_active }}<small>/{{ vehicles_total }}</small></div><div class="stat-label">Veículos ativos</div></div></div>
+  <div class="col-sm-6 col-md-3"><div class="stat-box"><div class="stat-value">{{ rented_now }}</div><div class="stat-label">Alugados agora</div></div></div>
+  <div class="col-sm-6 col-md-3"><div class="stat-box"><div class="stat-value">{{ reservations_confirmed }}</div><div class="stat-label">Reservas confirmadas</div></div></div>
+  <div class="col-sm-6 col-md-3"><div class="stat-box"><div class="stat-value">R$ {{ revenue_month|floatformat:2 }}</div><div class="stat-label">Receita do mês (retiradas)</div></div></div>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading"><strong>Retiradas hoje ({{ today|date:"d/m/Y" }})</strong></div>
+      <ul class="list-group">
+        {% for r in pickups_today %}
+          <li class="list-group-item"><a href="{{ r.get_absolute_url }}">#{{ r.pk }}</a> — {{ r.vehicle.name }} — {{ r.customer }}</li>
+        {% empty %}
+          <li class="list-group-item text-muted">Nenhuma retirada hoje.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading"><strong>Devoluções hoje</strong></div>
+      <ul class="list-group">
+        {% for r in returns_today %}
+          <li class="list-group-item"><a href="{{ r.get_absolute_url }}">#{{ r.pk }}</a> — {{ r.vehicle.name }} — {{ r.customer }}</li>
+        {% empty %}
+          <li class="list-group-item text-muted">Nenhuma devolução hoje.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading"><strong>Vendas dos últimos 7 dias</strong> (reservas criadas, exceto canceladas)</div>
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead><tr><th>Dia</th><th>Reservas</th><th>Valor</th></tr></thead>
+      <tbody>
+        {% for row in daily_sales %}
+          <tr><td>{{ row.day|date:"d/m/Y" }}</td><td>{{ row.total_reservations }}</td><td>R$ {{ row.total_value|floatformat:2 }}</td></tr>
+        {% empty %}
+          <tr><td colspan="3" class="text-muted">Sem vendas no período.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

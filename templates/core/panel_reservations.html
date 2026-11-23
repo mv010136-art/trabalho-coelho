@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Painel — Reservas{% endblock %}
+{% block content %}
+<h2 class="page-header">Painel da equipe</h2>
+{% include "core/_panel_nav.html" with active="reservations" %}
+
+<form method="get" class="form-inline" style="margin-bottom:15px">
+  <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Cliente, veículo ou placa">
+  <select name="status" class="form-control">
+    <option value="">Todas as situações</option>
+    {% for value, label in status_choices %}
+      <option value="{{ value }}"{% if value == status %} selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span> Filtrar</button>
+  {% if q or status %}<a href="{% url 'core:panel_reservations' %}" class="btn btn-link">Limpar</a>{% endif %}
+</form>
+
+<div class="table-responsive">
+  <table class="table table-bordered table-striped table-hover table-stack">
+    <thead>
+      <tr><th>#</th><th>Cliente</th><th>Telefone</th><th>Veículo</th><th>Retirada</th><th>Devolução</th><th>Total</th><th>Situação</th><th>Ações</th></tr>
+    </thead>
+    <tbody>
+      {% for r in page_obj %}
+        <tr>
+          <td data-label="Reserva">{{ r.pk }}</td>
+          <td data-label="Cliente">{{ r.customer }}</td>
+          <td data-label="Telefone">{{ r.customer.phone|default:"—" }}</td>
+          <td data-label="Veículo">{{ r.vehicle.name }} <small class="text-muted">{{ r.vehicle.plate }}</small></td>
+          <td data-label="Retirada">{{ r.start_date|date:"d/m/Y" }}</td>
+          <td data-label="Devolução">{{ r.end_date|date:"d/m/Y" }}</td>
+          <td data-label="Total">R$ {{ r.total_price|floatformat:2 }}</td>
+          <td data-label="Situação"><span class="label label-status-{{ r.status }}">{{ r.get_status_display }}</span></td>
+          <td data-label="Ações">
+            <a class="btn btn-info btn-xs" href="{{ r.get_absolute_url }}" title="Ver"><span class="glyphicon glyphicon-eye-open"></span></a>
+            {% if r.status == 'confirmed' %}
+              <a class="btn btn-warning btn-xs" href="{% url 'reservations:update' r.pk %}" title="Alterar datas"><span class="glyphicon glyphicon-pencil"></span></a>
+              <form method="post" action="{% url 'reservations:complete' r.pk %}" class="inline-form">
+                {% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">
+                <button type="submit" class="btn btn-success btn-xs" title="Marcar como concluída"><span class="glyphicon glyphicon-ok"></span></button>
+              </form>
+              <a class="btn btn-danger btn-xs" href="{% url 'reservations:cancel' r.pk %}?next={{ request.get_full_path|urlencode }}" title="Cancelar"><span class="glyphicon glyphicon-remove"></span></a>
+            {% endif %}
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="9" class="text-muted">Nenhuma reserva encontrada.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% include "includes/pagination.html" %}
+{% endblock %}

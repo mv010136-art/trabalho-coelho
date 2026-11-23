@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Página não encontrada{% endblock %}
+{% block content %}
+<div class="text-center">
+  <h1>404</h1>
+  <p class="lead">Não encontramos a página que você procura.</p>
+  <a class="btn btn-brand" href="{% url 'core:home' %}">Voltar ao início</a>
+</div>
+{% endblock %}

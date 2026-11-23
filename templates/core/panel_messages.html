@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Painel — Mensagens{% endblock %}
+{% block content %}
+<h2 class="page-header">Painel da equipe</h2>
+{% include "core/_panel_nav.html" with active="messages" %}
+
+<div class="table-responsive">
+  <table class="table table-bordered table-striped">
+    <thead><tr><th>Recebida em</th><th>Nome</th><th>E-mail</th><th>Mensagem</th><th>Ações</th></tr></thead>
+    <tbody>
+      {% for m in page_obj %}
+        <tr>
+          <td>{{ m.created_at|date:"d/m/Y H:i" }}</td>
+          <td>{{ m.name }}</td>
+          <td><a href="mailto:{{ m.email }}">{{ m.email }}</a></td>
+          <td>{{ m.message|linebreaksbr }}</td>
+          <td>
+            <form method="post" action="{% url 'core:message_delete' m.pk %}" class="inline-form" onsubmit="return confirm('Excluir esta mensagem?');">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger btn-xs" title="Excluir"><span class="glyphicon glyphicon-trash"></span></button>
+            </form>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="5" class="text-muted">Nenhuma mensagem recebida.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% include "includes/pagination.html" %}
+{% endblock %}

@@ -1,0 +1,4 @@
+# Django 5.2 é a versão LTS (suporte de segurança até abril de 2028; Python 3.10–3.13).
+Django>=5.2,<5.3
+# Necessário para o campo de foto (ImageField) dos veículos.
+Pillow>=10.0

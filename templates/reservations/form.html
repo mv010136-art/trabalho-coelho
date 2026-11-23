@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-md-6 col-md-offset-3">
+    <h2 class="page-header">{{ title }}</h2>
+    <div class="well well-sm">
+      <strong>{{ vehicle.name }}</strong> ({{ vehicle.brand }}, {{ vehicle.seats }} lugares)<br>
+      Diária: <strong>R$ {{ vehicle.daily_rate|floatformat:2 }}</strong>
+      <div id="price-estimate" class="text-muted" data-rate="{{ vehicle.daily_rate|stringformat:'s' }}"></div>
+    </div>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% include "includes/form_fields.html" %}
+      <button type="submit" class="btn btn-brand"><span class="glyphicon glyphicon-ok"></span> {% if reservation %}Salvar alterações{% else %}Confirmar reserva{% endif %}</button>
+      <a href="{% if reservation %}{{ reservation.get_absolute_url }}{% else %}{% url 'vehicles:detail' vehicle.pk %}{% endif %}" class="btn btn-default">Voltar</a>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  var box = document.getElementById('price-estimate');
+  var start = document.getElementById('id_start_date');
+  var end = document.getElementById('id_end_date');
+  if (!box || !start || !end) { return; }
+  var rate = parseFloat(box.getAttribute('data-rate'));
+  function update() {
+    if (!start.value || !end.value || isNaN(rate)) { box.textContent = ''; return; }
+    var days = Math.round((new Date(end.value) - new Date(start.value)) / 86400000);
+    if (days > 0) {
+      box.textContent = days + ' diária(s) — total estimado: R$ ' + (days * rate).toFixed(2).replace('.', ',');
+    } else {
+      box.textContent = 'A devolução deve ser depois da retirada.';
+    }
+  }
+  start.addEventListener('change', update);
+  end.addEventListener('change', update);
+  update();
+})();
+</script>
+{% endblock %}

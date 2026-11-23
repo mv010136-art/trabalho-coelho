@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Meu perfil{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-md-6 col-md-offset-3">
+    <h2 class="page-header">Meu perfil</h2>
+    <p class="text-muted">Usuário: <strong>{{ user.username }}</strong></p>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% include "includes/form_fields.html" with form=user_form %}
+      {% include "includes/form_fields.html" with form=customer_form %}
+      <button type="submit" class="btn btn-brand"><span class="glyphicon glyphicon-floppy-disk"></span> Salvar</button>
+      <a href="{% url 'reservations:list' %}" class="btn btn-default">Minhas reservas</a>
+    </form>
+  </div>
+</div>
+{% endblock %}

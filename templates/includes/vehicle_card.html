@@ -1,0 +1,33 @@
+<div class="col-sm-6 col-md-4 col-lg-3">
+  <div class="vehicle-card">
+    <a href="{% url 'vehicles:detail' vehicle.pk %}">
+      {% if vehicle.image %}
+        <img class="vehicle-photo" src="{{ vehicle.image.url }}" alt="{{ vehicle.name }}" loading="lazy">
+      {% else %}
+        <div class="vehicle-photo-placeholder"><span class="glyphicon glyphicon-road"></span></div>
+      {% endif %}
+    </a>
+    <div class="caption">
+      <h4><a href="{% url 'vehicles:detail' vehicle.pk %}">{{ vehicle.name }}</a></h4>
+      <div class="vehicle-meta">
+        {{ vehicle.brand }} &middot; {{ vehicle.seats }} lugares
+        &middot; <span class="glyphicon glyphicon-heart"></span> {{ vehicle.likes_count }}
+      </div>
+      <div class="spec-tags">
+        <span class="tag">{{ vehicle.get_category_display }}</span>
+        <span class="tag">{{ vehicle.get_transmission_display }}</span>
+        <span class="tag">{{ vehicle.get_fuel_display }}</span>
+      </div>
+      <div class="vehicle-price">R$ {{ vehicle.daily_rate|floatformat:2 }} <small>/ dia</small></div>
+      <p>
+        {% if vehicle.is_rented_now %}
+          <span class="label label-warning">Alugado agora</span>
+        {% else %}
+          <span class="label label-success">Disponível</span>
+        {% endif %}
+      </p>
+      <a href="{% url 'vehicles:detail' vehicle.pk %}" class="btn btn-default btn-sm">Detalhes</a>
+      <a href="{% url 'reservations:create' vehicle.pk %}{% if dates_qs %}?{{ dates_qs }}{% endif %}" class="btn btn-brand btn-sm">Reservar</a>
+    </div>
+  </div>
+</div>

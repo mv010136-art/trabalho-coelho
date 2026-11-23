@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Cadastro de cliente{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-md-6 col-md-offset-3">
+    <h2 class="page-header">Cadastro de cliente</h2>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% include "includes/form_fields.html" %}
+      <button type="submit" class="btn btn-brand btn-block"><span class="glyphicon glyphicon-ok"></span> Criar conta</button>
+    </form>
+    <p class="text-center" style="margin-top:15px">Já tem conta? <a href="{% url 'accounts:login' %}">Entrar</a></p>
+  </div>
+</div>
+{% endblock %}

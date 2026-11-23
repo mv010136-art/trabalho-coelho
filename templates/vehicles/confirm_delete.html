@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Excluir veículo{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-md-6 col-md-offset-3">
+    <h2 class="page-header">Excluir veículo</h2>
+    <p>Tem certeza de que deseja excluir <strong>{{ vehicle.name }}</strong> ({{ vehicle.plate }})?</p>
+    <p class="text-muted">Veículos que já têm reservas não podem ser excluídos; nesse caso desmarque “ativo na frota” na edição.</p>
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span> Sim, excluir</button>
+      <a href="{% url 'core:panel_vehicles' %}" class="btn btn-default">Voltar</a>
+    </form>
+  </div>
+</div>
+{% endblock %}

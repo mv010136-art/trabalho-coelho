@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-md-6 col-md-offset-3">
+    <h2 class="page-header">{{ title }}</h2>
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+      {% include "includes/form_fields.html" %}
+      <button type="submit" class="btn btn-brand"><span class="glyphicon glyphicon-floppy-disk"></span> Salvar</button>
+      <a href="{% url 'core:panel_vehicles' %}" class="btn btn-default">Cancelar</a>
+    </form>
+  </div>
+</div>
+{% endblock %}

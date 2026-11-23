@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Histórico de reservas{% endblock %}
+{% block content %}
+<h2 class="page-header">Histórico de reservas</h2>
+
+<ul class="nav nav-pills history-tabs">
+  {% for tab in tabs %}
+    <li{% if tab.key == current %} class="active"{% endif %}>
+      <a href="?f={{ tab.key }}">{{ tab.label }} <span class="badge">{{ tab.count }}</span></a>
+    </li>
+  {% endfor %}
+</ul>
+
+<div class="summary-line">
+  <span>Total em reservas (exceto canceladas): <b>R$ {{ total_booked|floatformat:2 }}</b></span>
+</div>
+
+<div class="table-responsive">
+  <table class="table table-bordered table-hover table-stack">
+    <thead><tr><th>#</th><th>Veículo</th><th>Retirada</th><th>Devolução</th><th>Diárias</th><th>Total</th><th>Situação</th><th>Ações</th></tr></thead>
+    <tbody>
+      {% for r in page_obj %}
+        <tr>
+          <td data-label="Reserva">#{{ r.pk }}</td>
+          <td data-label="Veículo"><a href="{{ r.vehicle.get_absolute_url }}">{{ r.vehicle.name }}</a></td>
+          <td data-label="Retirada">{{ r.start_date|date:"d/m/Y" }}</td>
+          <td data-label="Devolução">{{ r.end_date|date:"d/m/Y" }}</td>
+          <td data-label="Diárias">{{ r.days }}</td>
+          <td data-label="Total">R$ {{ r.total_price|floatformat:2 }}</td>
+          <td data-label="Situação"><span class="label label-phase-{{ r.phase }}">{{ r.phase_label }}</span></td>
+          <td data-label="Ações">
+            <a class="btn btn-info btn-xs" href="{{ r.get_absolute_url }}" title="Detalhes"><span class="glyphicon glyphicon-eye-open"></span> Detalhes</a>
+            {% if r.can_self_service %}
+              <a class="btn btn-warning btn-xs" href="{% url 'reservations:update' r.pk %}" title="Alterar datas"><span class="glyphicon glyphicon-pencil"></span></a>
+              <a class="btn btn-danger btn-xs" href="{% url 'reservations:cancel' r.pk %}" title="Cancelar"><span class="glyphicon glyphicon-remove"></span></a>
+            {% endif %}
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="8" class="text-muted">
+          {% if current == 'all' %}Você ainda não tem reservas. <a href="{% url 'vehicles:list' %}">Escolha um veículo</a>.
+          {% else %}Nenhuma reserva nesta situação.{% endif %}
+        </td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% include "includes/pagination.html" %}
+{% endblock %}

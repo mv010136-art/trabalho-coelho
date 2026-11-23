@@ -1,0 +1,13 @@
+{% if page_obj.has_other_pages %}
+<nav aria-label="Paginação">
+  <ul class="pager">
+    {% if page_obj.has_previous %}
+      <li class="previous"><a href="?{% querystring page=page_obj.previous_page_number %}">&larr; Anterior</a></li>
+    {% endif %}
+    <li>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</li>
+    {% if page_obj.has_next %}
+      <li class="next"><a href="?{% querystring page=page_obj.next_page_number %}">Próxima &rarr;</a></li>
+    {% endif %}
+  </ul>
+</nav>
+{% endif %}

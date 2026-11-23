@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Painel — Veículos{% endblock %}
+{% block content %}
+<h2 class="page-header">Painel da equipe</h2>
+{% include "core/_panel_nav.html" with active="vehicles" %}
+
+<form method="get" class="form-inline" style="margin-bottom:15px">
+  <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Buscar veículo">
+  <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span> Buscar</button>
+  {% if q %}<a href="{% url 'core:panel_vehicles' %}" class="btn btn-link">Limpar</a>{% endif %}
+</form>
+
+<div class="table-responsive">
+  <table class="table table-bordered table-striped table-hover table-stack">
+    <thead>
+      <tr><th>Veículo</th><th>Marca</th><th>Placa</th><th>Lugares</th><th>Diária</th><th>Curtidas</th><th>Situação</th><th>Ações</th></tr>
+    </thead>
+    <tbody>
+      {% for vehicle in page_obj %}
+        <tr>
+          <td data-label="Veículo">{{ vehicle.name }}</td>
+          <td data-label="Marca">{{ vehicle.brand }}</td>
+          <td data-label="Placa">{{ vehicle.plate }}</td>
+          <td data-label="Lugares">{{ vehicle.seats }}</td>
+          <td data-label="Diária">R$ {{ vehicle.daily_rate|floatformat:2 }}</td>
+          <td data-label="Curtidas">{{ vehicle.likes_count }}</td>
+          <td data-label="Situação">
+            {% if not vehicle.is_active %}<span class="label label-default">Fora da frota</span>
+            {% elif vehicle.is_rented_now %}<span class="label label-warning">Alugado agora</span>
+            {% else %}<span class="label label-success">Disponível</span>{% endif %}
+          </td>
+          <td data-label="Ações">
+            <a class="btn btn-info btn-xs" href="{% url 'vehicles:detail' vehicle.pk %}" title="Ver"><span class="glyphicon glyphicon-eye-open"></span></a>
+            <a class="btn btn-warning btn-xs" href="{% url 'vehicles:update' vehicle.pk %}" title="Editar"><span class="glyphicon glyphicon-pencil"></span></a>
+            <a class="btn btn-danger btn-xs" href="{% url 'vehicles:delete' vehicle.pk %}" title="Excluir"><span class="glyphicon glyphicon-trash"></span></a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="8" class="text-muted">Nenhum veículo encontrado.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% include "includes/pagination.html" %}
+{% endblock %}

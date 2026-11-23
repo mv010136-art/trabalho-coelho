@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<h2 class="page-header">{{ title }} <small>{{ subtitle }}</small></h2>
+
+<form method="get" class="filter-bar">
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger">{% for error in form.non_field_errors %}<div>{{ error }}</div>{% endfor %}</div>
+  {% endif %}
+  <div class="row">
+    <div class="col-xs-12 col-md-4"><div class="form-group">{% include "includes/filter_field.html" with field=form.q %}</div></div>
+    <div class="col-xs-6 col-sm-3 col-md-2"><div class="form-group{% if form.pickup.errors %} has-error{% endif %}">{% include "includes/filter_field.html" with field=form.pickup %}</div></div>
+    <div class="col-xs-6 col-sm-3 col-md-2"><div class="form-group{% if form.dropoff.errors %} has-error{% endif %}">{% include "includes/filter_field.html" with field=form.dropoff %}</div></div>
+    <div class="col-xs-6 col-sm-3 col-md-2"><div class="form-group">{% include "includes/filter_field.html" with field=form.category %}</div></div>
+    <div class="col-xs-6 col-sm-3 col-md-2"><div class="form-group">{% include "includes/filter_field.html" with field=form.brand %}</div></div>
+  </div>
+  <div class="row">
+    <div class="col-xs-6 col-sm-3 col-md-2"><div class="form-group">{% include "includes/filter_field.html" with field=form.transmission %}</div></div>
+    <div class="col-xs-6 col-sm-3 col-md-2"><div class="form-group{% if form.min_seats.errors %} has-error{% endif %}">{% include "includes/filter_field.html" with field=form.min_seats %}</div></div>
+    <div class="col-xs-6 col-sm-3 col-md-2"><div class="form-group{% if form.max_price.errors %} has-error{% endif %}">{% include "includes/filter_field.html" with field=form.max_price %}</div></div>
+    <div class="col-xs-6 col-sm-3 col-md-3"><div class="form-group">{% include "includes/filter_field.html" with field=form.order %}</div></div>
+    <div class="col-xs-12 col-md-3"><div class="form-group">
+      <label class="hidden-xs hidden-sm">&nbsp;</label>
+      <button type="submit" class="btn btn-brand btn-block" style="height:40px"><span class="glyphicon glyphicon-search"></span> Aplicar filtros</button>
+    </div></div>
+  </div>
+  {% if dates_qs %}
+    <p class="text-muted">Mostrando apenas veículos livres no período escolhido.</p>
+  {% endif %}
+</form>
+
+<p class="result-count">
+  {{ page_obj.paginator.count }} veículo{{ page_obj.paginator.count|pluralize }} encontrado{{ page_obj.paginator.count|pluralize }}
+  {% if filters_active %}&middot; <a href="{{ request.path }}">Limpar filtros</a>{% endif %}
+</p>
+
+<div class="row">
+  {% for vehicle in page_obj %}
+    {% include "includes/vehicle_card.html" %}
+  {% empty %}
+    <div class="col-xs-12"><p class="text-muted">Nenhum veículo encontrado para esta busca. Tente remover algum filtro.</p></div>
+  {% endfor %}
+</div>
+{% include "includes/pagination.html" %}
+{% endblock %}

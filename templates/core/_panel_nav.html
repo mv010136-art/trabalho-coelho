@@ -1,0 +1,8 @@
+<ul class="nav nav-pills panel-nav">
+  <li{% if active == 'dashboard' %} class="active"{% endif %}><a href="{% url 'core:dashboard' %}"><span class="glyphicon glyphicon-dashboard"></span> Resumo</a></li>
+  <li{% if active == 'vehicles' %} class="active"{% endif %}><a href="{% url 'core:panel_vehicles' %}"><span class="glyphicon glyphicon-road"></span> Veículos</a></li>
+  <li{% if active == 'reservations' %} class="active"{% endif %}><a href="{% url 'core:panel_reservations' %}"><span class="glyphicon glyphicon-tags"></span> Reservas</a></li>
+  <li{% if active == 'messages' %} class="active"{% endif %}><a href="{% url 'core:panel_messages' %}"><span class="glyphicon glyphicon-envelope"></span> Mensagens</a></li>
+  <li><a href="{% url 'vehicles:create' %}"><span class="glyphicon glyphicon-plus"></span> Novo veículo</a></li>
+  <li><a href="{% url 'admin:index' %}"><span class="glyphicon glyphicon-cog"></span> Admin do Django</a></li>
+</ul>
